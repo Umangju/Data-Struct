@@ -1,31 +1,77 @@
 ﻿#include <iostream>
-#define SIZE 10
+#define SIZE 5
 
 using namespace std;
 
-template<typename T>
-class Stack
+template <typename T>
+class LinearQueue
 {
 private:
-    int top;
+    int size;
+    int front;
+    int rear;
+
     T container[SIZE];
 
 public:
-    Stack()
+    LinearQueue()
     {
-        top = -1;
+        size = 0;
+        front = 0;
+        rear = 0;
 
         for (int i = 0; i < SIZE; i++)
         {
             container[i] = NULL;
         }
     }
+
+    bool Empty()
+    {
+        if (front == rear)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void Push(T data)
+    {
+        if (rear >= SIZE)
+        {
+            cout << "LinearQueue Overflow" << endl;
+        }
+        else
+        {
+            container[rear++] = data;
+
+            size++;
+        }
+    }
+
+    void Pop()
+    {
+        if (Empty())
+        {
+            cout << "LinearQueue Underflow" << endl;
+        }
+        else
+        {
+            front = (front + 1) % SIZE;
+            size--;
+        }
+    }
 };
 
 int main()
 {
-    Stack<int> stack;
+    LinearQueue<int> linearQueue;
 
-
+    linearQueue.Push(10);
+    linearQueue.Push(10);
+    
     return 0;
 }
