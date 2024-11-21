@@ -1,10 +1,10 @@
 ﻿#include <iostream>
-#define SIZE 5
+#define SIZE 6
 
 using namespace std;
 
 template <typename T>
-class LinearQueue
+class CircleQueue
 {
 private:
     int size;
@@ -14,11 +14,11 @@ private:
     T container[SIZE];
 
 public:
-    LinearQueue()
+    CircleQueue()
     {
         size = 0;
-        front = 0;
-        rear = 0;
+        front = SIZE - 1;
+        rear = SIZE - 1;
 
         for (int i = 0; i < SIZE; i++)
         {
@@ -40,14 +40,14 @@ public:
 
     void Push(T data)
     {
-        if (rear >= SIZE)
+        if ((rear + 1) % SIZE == front)
         {
-            cout << "LinearQueue Overflow" << endl;
+            cout << "CircleQueue Overflow" << endl;
         }
         else
         {
-            container[rear++] = data;
-
+            rear = (rear + 1) % SIZE;
+            container[rear] = data;
             size++;
         }
     }
@@ -56,22 +56,57 @@ public:
     {
         if (Empty())
         {
-            cout << "LinearQueue Underflow" << endl;
+            cout << "CircleQueue is Empty" << endl;
         }
         else
         {
             front = (front + 1) % SIZE;
+            container[front] = NULL;
             size--;
         }
+    }
+
+    int& Size()
+    {
+        return size;
+    }
+
+    T& Front()
+    {
+        return container[(front + 1) % SIZE];
+    }
+
+    T& Back()
+    {
+        if (Empty())
+        {
+            cout << "No Data Exists" << endl;
+            exit(1);
+        }
+        return container[rear];
     }
 };
 
 int main()
 {
-    LinearQueue<int> linearQueue;
+    CircleQueue<char> circlequeue;
 
-    linearQueue.Push(10);
-    linearQueue.Push(10);
-    
+    circlequeue.Push('A');
+    circlequeue.Push('B');
+    circlequeue.Push('C');
+    circlequeue.Push('D');
+
+    while (circlequeue.Empty() == false)
+    {
+        cout << circlequeue.Front() << endl;
+
+        circlequeue.Pop();
+    }
+
+    circlequeue.Push('E');
+    circlequeue.Push('F');
+    circlequeue.Push('G');
+    circlequeue.Push('H');
+
     return 0;
 }
