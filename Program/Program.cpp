@@ -1,68 +1,128 @@
 ﻿#include <iostream>
-#define SIZE 6
 
 using namespace std;
 
 template <typename T>
-class CircleQueue
+class Vector
 {
 private:
+    T* container;
+    int capacity;
     int size;
-    int front;
-    int rear;
-
-    T container[SIZE];
 
 public:
-    CircleQueue()
+    Vector()
     {
         size = 0;
-        front = SIZE - 1;
-        rear = SIZE - 1;
+        capacity = 0;
+        container = nullptr;
+    }
 
-        for (int i = 0; i < SIZE; i++)
+    ~Vector()
+    {
+        if (container != nullptr)
         {
-            container[i] = NULL;
+            delete[] container;
         }
     }
 
-    bool Empty()
+    void Resize(int newSize)
     {
-        if (front == rear)
+        // 1. capacity에 새로운 size값을 저장한다.
+        capacity = newSize;
+
+        // 2. 새로운 포인터 변수를 생성해서 새롭게 만들어진
+        //    메모리 공간을 가리키도록 한다.
+        T* newContainer = new T[capacity];
+
+        // 3. 새로운 메모리 공간의 값을 초기화합니다.
+        for (int i = 0; i < capacity; i++)
         {
-            return true;
+            newContainer[i] = NULL;
         }
-        else
+
+        // 4. 기존 배열에 있는 값을 복사해서 새로운 배열
+        //    에 넣어준다.
+        for (int i = 0; i < size; i++)
         {
-            return false;
+            newContainer[i] = container[i];
         }
+
+        // 5. 기존 배열의 메모리를 해제합니다.
+        if (container != nullptr)
+        {
+            delete[] container;
+        }
+
+        // 6. 기존에 배열을 가리키면 포인터 변수의 값을
+        //    새로운 배열의 시작 주소로 가리킨다.
+        container = newContainer;
     }
 
-    void Push(T data)
+#pragma region Resize 내 코드
+    /*void Resize(int newSize)
     {
-        if ((rear + 1) % SIZE == front)
+        if (newSize > capacity)
         {
-            cout << "CircleQueue Overflow" << endl;
+            while (capacity < newSize)
+            {
+                int newCapacity;
+                if (capacity == 0)
+                {
+                    newCapacity = 1;
+                }
+                else
+                {
+                    newCapacity = capacity * 2;
+                }
+
+                T* newContainer = new T[newCapacity];
+                for (int i = 0; i < size; i++)
+                {
+                    newContainer[i] = container[i];
+                }
+
+                delete[] container;
+                container = newContainer;
+                capacity = newCapacity;
+            }
         }
-        else
+
+        if (newSize > size)
         {
-            rear = (rear + 1) % SIZE;
-            container[rear] = data;
-            size++;
+            for (int i = size; i < newSize; i++)
+            {
+                container[i] = T();
+            }
         }
+
+        size = newSize;
+    }*/
+#pragma endregion
+
+    void PushBack(T data)
+    {
+        if (size <= 0)
+        {
+            Resize(1);
+        }
+        else if (size >= capacity)
+        {
+            Resize(capacity * 2);
+        }
+
+        container[size++] = data;
     }
 
-    void Pop()
+    void PopBack()
     {
-        if (Empty())
+        if (size > 0)
         {
-            cout << "CircleQueue is Empty" << endl;
+            cout << "Vector is Empty" << endl;
         }
         else
         {
-            front = (front + 1) % SIZE;
-            container[front] = NULL;
-            size--;
+            container[--size] = NULL;
         }
     }
 
@@ -71,42 +131,41 @@ public:
         return size;
     }
 
-    T& Front()
+    void Reserve(int newCapacity)
     {
-        return container[(front + 1) % SIZE];
+        if (newCapacity > capacity)
+        {
+            Resize(newCapacity);
+        }
     }
 
-    T& Back()
+    void Show()
     {
-        if (Empty())
+        if (size == 0)
         {
-            cout << "No Data Exists" << endl;
-            exit(1);
+            cout << "Vector is empty" << endl;
         }
-        return container[rear];
+        else
+        {
+            for (int i = 0; i < size; i++)
+            {
+                cout << container[i] << " ";
+            }
+            cout << endl;
+        }
     }
 };
 
 int main()
 {
-    CircleQueue<char> circlequeue;
+    Vector<int> vector;
+    
+    vector.Resize(10);
 
-    circlequeue.Push('A');
-    circlequeue.Push('B');
-    circlequeue.Push('C');
-    circlequeue.Push('D');
+    vector.PushBack(10);
+    vector.PushBack(20);
 
-    while (circlequeue.Empty() == false)
-    {
-        cout << circlequeue.Front() << endl;
-
-        circlequeue.Pop();
-    }
-
-    circlequeue.Push('E');
-    circlequeue.Push('F');
-    circlequeue.Push('G');
-    circlequeue.Push('H');
+    vector.PopBack();
 
     return 0;
 }

@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Class4th (Stack)", "..\Clas
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Class5th (Linear Queue)", "..\Class5th (Linear Queue)\Class5th (Linear Queue).vcxproj", "{93B8E996-2AFF-4156-AAD0-BBB93C3CCB4F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Class6th (Circle Queue)", "..\Class6th (Circle Queue)\Class6th (Circle Queue).vcxproj", "{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{93B8E996-2AFF-4156-AAD0-BBB93C3CCB4F}.Release|x64.Build.0 = Release|x64
 		{93B8E996-2AFF-4156-AAD0-BBB93C3CCB4F}.Release|x86.ActiveCfg = Release|Win32
 		{93B8E996-2AFF-4156-AAD0-BBB93C3CCB4F}.Release|x86.Build.0 = Release|Win32
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Debug|x64.ActiveCfg = Debug|x64
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Debug|x64.Build.0 = Debug|x64
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Debug|x86.ActiveCfg = Debug|Win32
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Debug|x86.Build.0 = Debug|Win32
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Release|x64.ActiveCfg = Release|x64
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Release|x64.Build.0 = Release|x64
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Release|x86.ActiveCfg = Release|Win32
+		{596A24DF-C2F6-4D4A-91DB-8CD48CD5EAFC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
