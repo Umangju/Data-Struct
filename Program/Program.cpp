@@ -2,72 +2,100 @@
 
 using namespace std;
 
-struct Node
+#define SIZE 6
+
+template<typename KEY, typename VALUE>
+class HashTable
 {
-	int data;
-	Node* left;
-	Node* right;
+private:
+	struct Node
+	{
+		KEY key;
+		VALUE value;
+
+		Node* next;
+	};
+
+	struct Bucket
+	{
+		int count;
+		Node* head;
+	};
+
+	Bucket bucket[SIZE];
+public:
+	HashTable()
+	{
+		for (int i = 0; i < SIZE; i++)
+		{
+			bucket[i].count = 0;
+			bucket[i].head = nullptr;
+		}
+	}
+
+	template <typename T>
+	int HashFunction(T key)
+	{
+		int hashIndex = (int)key % SIZE;
+
+		return hashIndex;
+	}
+
+	template<>
+	int HashFunction(std::string key)
+	{
+		int result = 0;
+		for (int i = 0; i < key.length(); i++)
+		{
+			result += key[i];
+		}
+		
+		int hashIndex = result % SIZE;
+
+		return hashIndex;
+	}
+
+	Node* CreateNode(KEY key, VALUE value)
+	{
+		Node* newNode = new Node();
+
+		newNode->key = key;
+		newNode->value = value;
+
+		newNode->next = nullptr;
+
+		return newNode;
+	}
+
+	void Insert(KEY key, VALUE value)
+	{
+		// 해시 인덱스를 계산하여 해당 버킷을 찾음
+		int hashIndex = HashFunction(key);
+
+		// 새로운 노드를 생성
+		Node* newNode = CreateNode(key, value);
+
+		// 해당 버킷에 기존 노드가 없다면 새 노드를 그 버킷의 첫 번째 노드로 설정
+		if (bucket[hashIndex].count == 0)
+		{
+			bucket[hashIndex].head = newNode;
+		}
+		else
+		{
+			newNode->next = bucket[hashIndex].head;
+
+			bucket[hashIndex].head = newNode;
+		}
+
+		// 버킷의 노드 수를 증가시킴
+		bucket[hashIndex].count++;
+	}
+
 };
-
-Node* CreateNode(int data, Node* left, Node* right)
-{
-	Node* newNode = new Node();
-
-	newNode->data = data;
-
-	newNode->left = left;
-
-	newNode->right = right;
-
-	return newNode;
-}
-
-void Preorder(Node* root)
-{
-	if (root != nullptr)
-	{
-		cout << root->data << endl;
-		Preorder(root->left);
-		Preorder(root->right);
-	}
-}
-
-void Inorder(Node* root)
-{
-	if (root != nullptr)
-	{
-		Inorder(root->left);
-		cout << root->data << " ";
-		Inorder(root->right);
-	}
-}
-
-void Postorder(Node* root)
-{
-	if (root != nullptr)
-	{
-		Postorder(root->left);
-		Postorder(root->right);
-		cout << root->data << " ";
-	}
-}
 
 int main()
 {
-	Node* node5 = CreateNode(5, nullptr, nullptr);
-	Node* node4 = CreateNode(4, nullptr, nullptr);
-	Node* node3 = CreateNode(3, nullptr, nullptr);
-	Node* node2 = CreateNode(2, node4, node5);
-	Node* node1 = CreateNode(1, node2, node3);
+	HashTable<int, std::string> hashTable;
 
-	// 전위 순회
-	// Preorder(node1);
-
-	// 중위 순회
-	// Inorder(node1);
-
-	// 후위 순회
-	// Postorder(node1);
-	
 	return 0;
 }
