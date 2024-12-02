@@ -2,208 +2,118 @@
 
 using namespace std;
 
-#define SIZE 6
+#define SIZE 8
 
-template<typename KEY, typename VALUE>
-class HashTable
+template<typename T>
+class Heap
 {
 private:
-	struct Node
-	{
-		KEY key;
-		VALUE value;
+    int index;
+    T container[SIZE];
 
-		Node* next;
-	};
-
-	struct Bucket
-	{
-		int count;
-		Node* head;
-	};
-
-	Bucket bucket[SIZE];
 public:
-	HashTable()
-	{
-		for (int i = 0; i < SIZE; i++)
-		{
-			bucket[i].count = 0;
-			bucket[i].head = nullptr;
-		}
-	}
+    Heap()
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            container[i] = 0;
+        }
 
-	~HashTable()
-	{
-		for (int i = 0; i < SIZE; i++)
-		{
-			Node* deleteNode = bucket[i].head;
-			Node* nextNode = bucket[i].head;
+        index = 0;
+    }
 
-			if (bucket[i].head == nullptr)
-			{
-				continue;
-			}
-			else
-			{
-				while (nextNode != nullptr)
-				{
-					nextNode = deleteNode->next;
-					delete deleteNode;
-					deleteNode = nextNode;
-				}
-			}
-		}
-	}
+    void Insert(T data)
+    {
+        if (index >= SIZE)
+        {
+            cout << "Heap overflow." << endl;
+        }
+        else
+        {
+            container[index] = data;
 
-	template <typename T>
-	int HashFunction(T key)
-	{
-		int hashIndex = (int)key % SIZE;
+            int child = index;
+            int parent = child / 2;
 
-		return hashIndex;
-	}
+            while (child > 1)
+            {
+                if (container[parent] < container[child])
+                {
+                    swap(container[parent], container[child]);
+                }
 
-	template<>
-	int HashFunction(std::string key)
-	{
-		int result = 0;
-		for (int i = 0; i < key.length(); i++)
-		{
-			result += key[i];
-		}
-		
-		int hashIndex = result % SIZE;
+                child = parent;
+                parent = child / 2;
+            };
+        }
+    }
 
-		return hashIndex;
-	}
+    T Remove()
+    {
+        if (index == 0)
+        {
+            cout << "Heap underflow." << endl;
+            return -1;
+        }
 
-	Node* CreateNode(KEY key, VALUE value)
-	{
-		Node* newNode = new Node();
+        T removed = container[1];
+        container[1] = container[index];
+        container[index] = 0;
+        index--;
 
-		newNode->key = key;
-		newNode->value = value;
+        int parent = 1;
+        while (true)
+        {
+            int left = parent * 2;
+            int right = parent * 2 + 1;
+            int largest = parent;
 
-		newNode->next = nullptr;
+            if (left <= index && container[left] > container[largest])
+            {
+                largest = left;
+            }
 
-		return newNode;
-	}
+            if (right <= index && container[right] > container[largest])
+            {
+                largest = right;
+            }
 
-	void Insert(KEY key, VALUE value)
-	{
-		// 해시 인덱스를 계산하여 해당 버킷을 찾음
-		int hashIndex = HashFunction(key);
+            if (largest == parent)
+            {
+                break;
+            }
 
-		// 새로운 노드를 생성
-		Node* newNode = CreateNode(key, value);
+            T temp = container[parent];
+            container[parent] = container[largest];
+            container[largest] = temp;
 
-		// 해당 버킷에 기존 노드가 없다면 새 노드를 그 버킷의 첫 번째 노드로 설정
-		if (bucket[hashIndex].count == 0)
-		{
-			bucket[hashIndex].head = newNode;
-		}
-		else
-		{
-			newNode->next = bucket[hashIndex].head;
+            parent = largest;
+        }
 
-			bucket[hashIndex].head = newNode;
-		}
+        return removed;
+    }
 
-		// 버킷의 노드 수를 증가시킴
-		bucket[hashIndex].count++;
-	}
-
-	void Remove(KEY key)
-	{
-		// 해시 인덱스를 계산하여 해당 버킷을 찾음
-		int hashIndex = HashFunction(key);
-
-		// 현재 버킷의 첫 번째 노드를 가져옴
-		Node* currentNode = bucket[hashIndex].head;
-		Node* previousNode = nullptr;
-
-		// 버킷이 비어있는 경우
-		if (currentNode == nullptr)
-		{
-			cout << "Not Key Found." << endl;
-			return;
-		}
-		else
-		{
-			// 연결 리스트를 순회하며 노드를 탐색
-			while (currentNode != nullptr)
-			{
-				if (currentNode->key == key) // 일치하는 키를 발견한 경우
-				{
-					if (previousNode == nullptr) // 첫 번째 노드라면
-					{
-						bucket[hashIndex].head = currentNode->next;
-					}
-					else // 중간 또는 마지막 노드라면
-					{
-						previousNode->next = currentNode->next;
-					}
-
-					// 노드 삭제
-					delete currentNode;
-
-					// 버킷 노드 개수 감소
-					bucket[hashIndex].count--;
-
-					cout << "Key " << key << " removed successfully." << endl;
-					return;
-				}
-				else // 일치하는 키를 찾지 못한 경우 다음 노드로 이동
-				{
-					previousNode = currentNode;
-					currentNode = currentNode->next;
-				}
-			}
-
-			// 키를 찾지 못한 경우
-			cout << "Key " << key << " not found in the hash table." << endl;
-		}
-	}
-
-	void Show()
-	{
-		for (int i = 0; i < SIZE; i++)
-		{
-			// 현재 버킷의 head를 가져옴
-			Node* currentNode = bucket[i].head;
-
-			cout << "Bucket [" << i << "]: ";
-
-			// 버킷이 비어있으면 출력
-			if (currentNode == nullptr)
-			{
-				cout << "Empty" << endl;
-				continue;
-			}
-
-			// 연결 리스트 순회
-			while (currentNode != nullptr)
-			{
-				cout << "(" << currentNode->key << ", " << currentNode->value << ") -> ";
-				currentNode = currentNode->next;
-			}
-			cout << "nullptr" << endl;
-		}
-	}
+    void Show()
+    {
+        for (int i = 0; i <= index; i++)
+        {
+            cout << container[i] << " ";
+        }
+        cout << endl;
+    }
 
 };
 
 int main()
 {
-	HashTable<int, std::string> hashTable;
+    Heap<int> heap;
 
-	hashTable.Insert(10, "Vector");
-	hashTable.Insert(15, "Stack");
-	hashTable.Insert(6, "Queue");
-	hashTable.Insert(20, "Linked List");
+    heap.Insert(5);
+    heap.Insert(7);
+    heap.Insert(9);
+    heap.Insert(16);
 
-	hashTable.Show();
+    heap.Show();
 
-	return 0;
+    return 0;
 }
