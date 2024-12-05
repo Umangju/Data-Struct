@@ -1,82 +1,141 @@
 ﻿#include <iostream>
 
 using namespace std;
-
-#define SIZE 10
-
-struct Node
-{
-    char data;
-    Node* next;
-
-    Node(char data, Node* link = nullptr)
-    {
-        this->data = data;
-        this->next = link;
-    }
-};
-
+    
 template<typename T>
-class AdjacencyList
+class BinarySearchTree
 {
 private:
     struct Node
     {
-        char data;
-        Node* next;
-
-        Node(T data, Node* link = nullptr)
-        {
-            this->data = data;
-            next = link;
-        }
+        T data;
+        Node* left;
+        Node* right;
     };
 
-    int size;           // 정점의 개수
-    T vertex[SIZE];     // 정점의 집합
-    Node* list[SIZE];   // 인접 리스트
+    Node* root;
 
 public:
-    AdjacencyList()
+    BinarySearchTree()
     {
-        size = 0;
-
-        for (int i = 0; i < SIZE; i++)
-        {
-            list[i] = NULL;
-            vertex[i] = NULL;
-        }
+        root = nullptr;
     }
 
-    ~AdjacencyList()
+    Node* RootNode()
     {
-        for (int i = 0; i < SIZE; i++)
-        {
-            if (list[i] != nullptr)
-            {
-                delete[] list[i];
-            }
-        }
+        return root;
+    }
+
+    Node* CreateNode(T data)
+    {
+        Node* newNode = new Node();
+
+        newNode->data = data;
+        newNode->left = nullptr;
+        newNode->right = nullptr;
+
+        return newNode;
     }
 
     void Insert(T data)
     {
-        if (size >= SIZE)
+        if (root == nullptr)
         {
-            cout << "Adjacency List Overflow" << endl;
-            return;
+            root = CreateNode(data);
         }
         else
         {
-            vertex[size++] = data;
+            Node* currentNode = root;
+
+            while (currentNode != nullptr)
+            {
+                if (currentNode->data == data)
+                {
+                    if (currentNode->left == nullptr)
+                    {
+                        return;
+                    }
+                    else if (currentNode->data > data)
+                    {
+                        if (currentNode->left == nullptr)
+                        {
+                            currentNode->left = CreateNode(data);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        currentNode = currentNode->left;
+                    }
+                }
+                else 
+                {
+                    if (currentNode->right == nullptr)
+                    {
+                        currentNode->right = CreateNode(data);
+
+                        break;
+                    }
+                    else
+                    {
+                        currentNode = currentNode->right;
+                    }
+                }
+            }
         }
     }
 
+    void Inorder(Node* node)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        Inorder(node->left);
+
+        cout << node->data << " ";
+
+        Inorder(node->right);
+    }
+
+    void Destroy(Node* node)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        // 왼쪽 서브트리 삭제
+        Destroy(node->left);
+        // 오른쪽 서브트리 삭제
+        Destroy(node->right);
+
+        // 현재 노드 삭제
+        delete node;
+    }
+
+    // 소멸자
+    ~BinarySearchTree()
+    {
+        // 루트부터 트리를 삭제
+        Destroy(root);
+    }
 };
 
 int main()
 {
-    AdjacencyList<char> adjacencyList;
+    BinarySearchTree<int> binarySearchTree;
+
+    binarySearchTree.Insert(15);
+    binarySearchTree.Insert(9);
+    binarySearchTree.Insert(7);
+    binarySearchTree.Insert(20);
+
+    cout << "Inorder Traversal: ";
+    binarySearchTree.Inorder(binarySearchTree.RootNode());
+    cout << endl;
+
 
     return 0;
 }
